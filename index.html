@@ -5,13 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>I Love Logika - Головна</title>
     <style>
+        :root {
+            --primary: #6e8efb;
+            --secondary: #a777e3;
+            --accent: #ff6b6b;
+            --light: white;
+            --dark: #333;
+        }
+        
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             margin: 0;
             padding: 0;
-            color: white;
+            color: var(--light);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
         }
         
         .container {
@@ -19,10 +31,13 @@
             margin: 0 auto;
             padding: 20px;
             text-align: center;
+            flex: 1;
         }
         
         header {
             padding: 40px 0;
+            position: relative;
+            z-index: 1;
         }
         
         h1 {
@@ -43,11 +58,43 @@
             font-weight: bold;
             margin-bottom: 20px;
             display: inline-block;
-            background: white;
-            color: #6e8efb;
+            background: var(--light);
+            color: var(--primary);
             padding: 10px 20px;
             border-radius: 50px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .logo:hover {
+            transform: rotate(-5deg) scale(1.1);
+        }
+        
+        .heart {
+            display: inline-block;
+            transition: all 0.5s;
+        }
+        
+        .falling-heart {
+            position: absolute;
+            color: var(--accent);
+            font-size: 1.5rem;
+            animation: fall 1.5s linear forwards;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(300px) rotate(360deg);
+                opacity: 0;
+            }
         }
         
         nav {
@@ -56,8 +103,8 @@
         
         .main-button {
             display: inline-block;
-            background: #ff6b6b;
-            color: white;
+            background: var(--accent);
+            color: var(--light);
             padding: 20px 40px;
             margin: 10px;
             border-radius: 50px;
@@ -66,6 +113,8 @@
             font-size: 1.5rem;
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
         }
         
         .main-button:hover {
@@ -74,11 +123,28 @@
             background: #ff5252;
         }
         
+        .main-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg);
+            transition: all 0.3s;
+        }
+        
+        .main-button:hover::after {
+            left: 100%;
+        }
+        
         .decoration {
             position: absolute;
             background: rgba(255,255,255,0.1);
             border-radius: 50%;
             z-index: -1;
+            animation: float 6s infinite ease-in-out;
         }
         
         .dec-1 {
@@ -95,32 +161,281 @@
             left: -100px;
         }
         
+        .dec-3 {
+            width: 150px;
+            height: 150px;
+            top: 30%;
+            left: 10%;
+        }
+        
+        .dec-4 {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            right: 10%;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
         footer {
-            margin-top: 50px;
             padding: 20px;
             font-size: 0.9rem;
+            background: rgba(0,0,0,0.1);
+            text-align: center;
+            width: 100%;
+            margin-top: auto;
+        }
+        
+        /* About Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: linear-gradient(145deg, #f9f9f9, #e6e6e6);
+            color: var(--dark);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.3);
+            background: linear-gradient(135deg, #f5d9ff, #d9e7ff);
+        }
+        
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--accent);
+            background: none;
+            border: none;
+        }
+        
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 30px 0;
+            justify-content: center;
+        }
+        
+        .gallery-item {
+            width: calc(33.333% - 15px);
+            height: 150px;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 0.9rem;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: linear-gradient(145deg, rgba(255,255,255,0.8), rgba(230,230,230,0.8));
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .testimonial {
+            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(145deg, #f0f0f0, #ffffff);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(240,240,240,0.9));
+        }
+        
+        .testimonial::before {
+            content: '"';
+            font-size: 4rem;
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            color: #eee;
+            z-index: 0;
+        }
+        
+        .testimonial-text {
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .main-button {
+                padding: 15px 30px;
+                font-size: 1.2rem;
+            }
+            
+            .gallery-item {
+                width: calc(50% - 10px);
+            }
         }
     </style>
 </head>
 <body>
     <div class="decoration dec-1"></div>
     <div class="decoration dec-2"></div>
+    <div class="decoration dec-3"></div>
+    <div class="decoration dec-4"></div>
     
     <div class="container">
         <header>
-            <div class="logo">I ❤️ Logika</div>
+            <div class="logo" id="logo">I <span class="heart">❤️</span> Logika</div>
             <h1>Мої проекти</h1>
             <p>Тут зібрані всі мої програми, створені під час курсу програмування</p>
         </header>
         
         <nav>
             <a href="games.html" class="main-button">Мої ігри</a>
-            <a href="#" class="main-button">Про мене</a>
+            <a href="#" class="main-button" id="aboutBtn">Про мене</a>
         </nav>
     </div>
     
+    <!-- About Modal -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeBtn">&times;</button>
+            <h2 style="color: var(--primary);">Мій досвід у Logika</h2>
+            
+            <div class="testimonial">
+                <div class="testimonial-text">
+                    Навчання в Logika було неймовірною пригода! Я отримав безцінний досвід у програмуванні, 
+                    навчився створювати власні проекти та розвинув логічне мислення. 
+                    Викладачі завжди були доброзичливими та професійними, а атмосфера - натхненною та креативною. 
+                    Особливо сподобалась можливість працювати над реальними проектами та бачити свої результати!
+                </div>
+            </div>
+            
+            <h3 style="color: var(--secondary);">Мої улюблені моменти</h3>
+            <div class="gallery">
+    <div class="gallery-item">
+        <div style="font-size: 1.2rem; font-weight: bold; color: var(--secondary);">Coming Soon</div>
+    </div>
+    <div class="gallery-item">
+        <div style="font-size: 1.2rem; font-weight: bold; color: var(--secondary);">Coming Soon</div>
+    </div>
+    <div class="gallery-item">
+        <div style="font-size: 1.2rem; font-weight: bold; color: var(--secondary);">Coming Soon</div>
+    </div>
+    <div class="gallery-item">
+        <div style="font-size: 1.2rem; font-weight: bold; color: var(--secondary);">Coming Soon</div>
+    </div>
+    <div class="gallery-item">
+        <div style="font-size: 1.2rem; font-weight: bold; color: var(--secondary);">Coming Soon</div>
+    </div>
+    <div class="gallery-item">
+        <div style="font-size: 1.2rem; font-weight: bold; color: var(--secondary);">Coming Soon</div>
+    </div>
+</div>
+            
+            <p>
+                <strong>Дякую LogikaSchool</strong> за цей чудовий досвід! Я обов'язково продовжу розвиватися у програмуванні 
+                та брати участь у нових проектах.
+            </p>
+        </div>
+    </div>
+    
     <footer>
-        &copy; 2023 I Love Logika Project. Всі права захищені.
+        &copy; 2025 I Love Logika Project. Всі права захищені.
     </footer>
+
+    <script>
+        // Modal functionality
+        const aboutBtn = document.getElementById('aboutBtn');
+        const aboutModal = document.getElementById('aboutModal');
+        const closeBtn = document.getElementById('closeBtn');
+        const logo = document.getElementById('logo');
+        const heart = document.querySelector('.heart');
+        
+        aboutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            aboutModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeBtn.addEventListener('click', function() {
+            aboutModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close modal when clicking outside
+        aboutModal.addEventListener('click', function(e) {
+            if (e.target === aboutModal) {
+                aboutModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Falling heart animation
+        logo.addEventListener('click', function(e) {
+            if (e.target.classList.contains('heart') || e.target.closest('.heart')) {
+                createFallingHeart(e);
+            }
+        });
+        
+        function createFallingHeart(e) {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.classList.add('falling-heart');
+            
+            // Position the heart at the click location
+            const rect = logo.getBoundingClientRect();
+            const x = rect.left + (rect.width / 2) - 15;
+            const y = rect.top + (rect.height / 2) - 15;
+            
+            heart.style.left = `${x}px`;
+            heart.style.top = `${y}px`;
+            
+            document.body.appendChild(heart);
+            
+            // Remove the heart after animation completes
+            setTimeout(() => {
+                heart.remove();
+            }, 1500);
+        }
+    </script>
 </body>
 </html>
